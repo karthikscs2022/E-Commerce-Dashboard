@@ -111,7 +111,7 @@ CREATE TABLE cart_items(
 
 --CREATE ENUM TYPE FOR ORDERS
 CREATE TYPE status AS ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled');
-CREATE TYPE payment_status AS ENUM('unpaid', 'paid', 'refunded', 'failed')
+CREATE TYPE payment_status AS ENUM('unpaid', 'paid', 'refunded', 'failed');
 
 --CREATE ORDERS TABLE 
 CREATE TABLE ORDERS(
@@ -125,4 +125,27 @@ CREATE TABLE ORDERS(
   payment_method VARCHAR(100) NOT NULL,
   tracking_number TEXT,
   placed_at TIMESTAMP NOT NULL
-)
+);
+
+--CREATE ORDER_ITEMS TABLE 
+CREATE TABLE order_items(
+    id SERIAL PRIMARY NUMBER,
+    order_id INT FOREIGN KEY REFERENCES orders(id) ,
+    variant_id INT FOREIGN KEY REFERENCES product_variants(id), 
+    quantity INT NOT NULL,
+    price_at_purchase NUMERIC(10,2) NOT NULL,
+    total_item_price DECIMAL(10,2) GENERATED ALWAYS AS (quantity*price_at_purchase) STORED
+);
+
+--CREATE REVIEWS TABLE 
+CREATE TABLE reviews(
+    id SERIAL PRIMARY KEY,
+    user_id INT FOREIGN KEY REFERENCES users(id),
+    product_id INT FOREIGN KEY REFERENCES products(id),
+    rating INT,
+    comment TEXT,
+    is_verified_purchase BOOLEAN DEFAULT FALSE,
+    is_publisshed BOOLEAN DEFAULT FALSE,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
